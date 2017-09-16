@@ -3,6 +3,7 @@
 # The data that you will use for this assignment are for 1999, 2002, 2005, and 2008.
 library(data.table)
 library(dplyr)
+library(ggplot2)
 
 if (!file.exists("exdata_data_NEI_data.zip")) {
   download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip",
@@ -12,15 +13,15 @@ if (!file.exists("exdata_data_NEI_data.zip")) {
 
 # Now we have files "summarySCC_PM25.rds" and "Source_Classification_Code.rds". Import!
 NEI <- readRDS("summarySCC_PM25.rds") %>% data.table()
+SCC <- readRDS("Source_Classification_Code.rds") %>% data.table()
 
 ## Let's exploratory analysis begin!
 
-# Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
-# Using the base plotting system, make a plot showing the total PM2.5 emission from all
-# sources for each of the years 1999, 2002, 2005, and 2008.
-EmissionByYear <- NEI[, .(Emission = sum(Emissions)), by=year]
-EmissionByYear <- as.data.frame(EmissionByYear)
+# How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
+MotorSCC <-  filter(SCC, grepl("Motor|motor", SCC.Level.Three))$SCC
+data <- NEI[SCC %in% MotorSCC, .(Emission = sum(Emissions)), by=year]
 
-png(file="plot1.png",width=480,height=480)
-barplot(EmissionByYear[ ,2], names.arg = EmissionByYear[ ,1], ylab = "Emission", xlab = "Year")
+png(file="plot5.png",width=480,height=480)
+g <- ggplot(data, aes(year, Emission))
+g + geom_point() + geom_line() + xlab("Year")
 dev.off()
