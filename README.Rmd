@@ -1,9 +1,12 @@
 ---
 title: "README"
 author: "Denis Stadnik"
+date: "03 12 2016"
 ---
 Exploratory Data Analysis Project
 ========================================================
+
+#Assignment 2
 
 Introduction
 -------------
